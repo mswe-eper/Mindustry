@@ -38,13 +38,6 @@ public class EnemyUnitBehaviorFSMTests {
             return this.state;
         }
 
-//        public void setX(float x) {
-//            this.x = x;
-//        }
-//        public void setY(float y) {
-//            this.y = y;
-//        }
-
         // The 3 Unit States instantiated as attack, retreat, and rally, which parallels GroundUnit and FlyingUnit classes
         // GroundUnit and FlyingUnit extends BaseUnit, which has a state variable called state of type StateMachine
         public final UnitState
