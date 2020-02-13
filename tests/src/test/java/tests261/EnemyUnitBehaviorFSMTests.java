@@ -410,4 +410,88 @@ public class EnemyUnitBehaviorFSMTests {
         Assertions.assertEquals(-50f, testEnemyUnit.health());
         Assertions.assertTrue(testEnemyUnit.isDead());
     }
+    
+    /* Self-loops */
+    @Test
+    public void testAttackToAttack() {
+        // Set the initial state to attack
+        testEnemyUnit.getState().set(testEnemyUnit.getStartState());
+        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        
+        // Testing attack, so value should be 0
+        int attackIndexInEnum = 0;
+        UnitCommand command= UnitCommand.all[attackIndexInEnum];
+
+        // Test transition via onCommand()
+        testEnemyUnit.onCommand(command);
+        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        
+        // Check second self-loop in terms to invalidateTarget()
+        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
+        // If player unit is out of range, then enemy unit cannot shoot
+        testPlayerUnit.set(0, 0);
+        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 100, 100, 10);
+        Assertions.assertFalse(isShooting);
+    }
+    
+    @Test
+    public void testShootingToShooting() {
+        // To be valid, enemy and player units must be on opposing teams
+        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
+
+        // Player unit is in range, enemy unit should be shooting
+        testPlayerUnit.set(0, 0);
+        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
+        Assertions.assertTrue(isShooting);
+        
+        // To be valid, enemy and player units must be on opposing teams
+        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
+
+        // Player unit is in range, enemy unit should be shooting (enemy unit position slightly changed)
+        testPlayerUnit.set(0, 0);
+        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 1, 1, 10);
+        Assertions.assertTrue(isShooting);
+    }
+    
+    @Test
+    public void testRetreatToRetreat() {
+        // Set the initial state to retreat
+        testEnemyUnit.getState().set(testEnemyUnit.retreat);
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        
+        // Testing retreat, so value should be 1
+        int retreatIndexInEnum = 1;
+        UnitCommand command= UnitCommand.all[retreatIndexInEnum];
+
+        // Test transition via onCommand()
+        testEnemyUnit.onCommand(command);
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+    }
+    
+    @Test
+    public void testRallyToRally() {
+        // Set the initial state to rally
+        testEnemyUnit.getState().set(testEnemyUnit.rally);
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        
+        // Testing rally, so value should be 2
+        int rallyIndexInEnum = 2;
+        UnitCommand command= UnitCommand.all[rallyIndexInEnum];
+
+        // Test transition via onCommand()
+        testEnemyUnit.onCommand(command);
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+    }
 }
