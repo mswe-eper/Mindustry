@@ -1,5 +1,5 @@
 jdk:
-- openjdk8
+- openjdk13
 dist: trusty
 android:
   components:
