@@ -1,3 +1,5 @@
+package tests261;
+
 import arc.math.geom.Vec2;
 import mindustry.entities.Units;
 import mindustry.entities.traits.HealthTrait;
@@ -445,16 +447,16 @@ public class EnemyUnitBehaviorFSMTests {
 
         // Player unit is in range, enemy unit should be shooting
         testPlayerUnit.set(0, 0);
-        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
-        Assertions.assertTrue(isShooting);
+        boolean isShooting1 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
+        Assertions.assertTrue(isShooting1);
         
         // To be valid, enemy and player units must be on opposing teams
         Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
 
         // Player unit is in range, enemy unit should be shooting (enemy unit position slightly changed)
         testPlayerUnit.set(0, 0);
-        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 1, 1, 10);
-        Assertions.assertTrue(isShooting);
+        boolean isShooting2 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 1, 1, 10);
+        Assertions.assertTrue(isShooting2);
     }
     
     @Test
