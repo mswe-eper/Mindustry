@@ -147,7 +147,7 @@ public class EnemyUnitBehaviorTestSuite {
 
         // Set initial positions
         dagger.set(0, 0);
-        unitOpposingTeam.set(100, 100);
+        unitOpposingTeam.set(500, 500);
 
         dagger.add();
         unitOpposingTeam.add();
@@ -262,7 +262,7 @@ public class EnemyUnitBehaviorTestSuite {
         // Set dagger unit to the retreat state
         dagger.setState(dagger.retreat);
 
-        // Assert that retreat is currently attack and not any other state
+        // Assert that state is currently retreat and not any other state
         Assertions.assertNotSame(dagger.attack, dagger.getStartState());
         Assertions.assertSame(dagger.retreat, dagger.getStartState());
         Assertions.assertNotSame(dagger.rally, dagger.getStartState());
@@ -298,8 +298,7 @@ public class EnemyUnitBehaviorTestSuite {
         unitOpposingTeam.set(1, 1);
 
         // invalidateTarget() determines shooting state
-        boolean targetIsNotValid = Units.invalidateTarget(unitOpposingTeam, dagger);
-        boolean isShooting = !targetIsNotValid;
+        boolean isShooting = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertTrue(isShooting);
     }
 
@@ -308,216 +307,270 @@ public class EnemyUnitBehaviorTestSuite {
      * =======================================================================*/
     @Test
     public void testAttackToRetreat() {
-        // Initially set state to attack to test transition
-        testEnemyUnit.getState().set(testEnemyUnit.attack);
+        // Set dagger unit to the attack state
+        dagger.setState(dagger.attack);
 
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        // Assert that state is currently attack and not any other state
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
         // Testing retreat, so value should be 1
         int retreatIndexInEnum = 1;
-        UnitCommand command= UnitCommand.all[retreatIndexInEnum];
+        UnitCommand command = UnitCommand.all[retreatIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
     }
 
     @Test
     public void testRetreatToRally() {
-        // Initially set state to retreat to test transition
-        testEnemyUnit.getState().set(testEnemyUnit.retreat);
+        // Set dagger unit to the retreat state
+        dagger.setState(dagger.retreat);
 
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        // Assert that state is currently retreat and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
         // Testing rally, so value should be 2
         int rallyIndexInEnum = 2;
         UnitCommand command= UnitCommand.all[rallyIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
     }
 
     @Test
     public void testRallyToAttack() {
-        // Initially set state to rally to test transition
-        testEnemyUnit.getState().set(testEnemyUnit.rally);
+        // Set dagger unit to the rally state
+        dagger.setState(dagger.rally);
 
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        // Assert that state is currently rally and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
 
         // Testing attack, so value should be 0
         int attackIndexInEnum = 0;
         UnitCommand command= UnitCommand.all[attackIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
     }
 
     @Test
     public void testAttackToRally() {
-        // Initially set state to attack to test transition
-        testEnemyUnit.getState().set(testEnemyUnit.attack);
+        // Set dagger unit to the attack state
+        dagger.setState(dagger.attack);
 
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        // Assert that state is currently attack and not any other state
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
         // Testing rally, so value should be 2
         int rallyIndexInEnum = 2;
         UnitCommand command= UnitCommand.all[rallyIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
     }
 
     @Test
     public void testRallyToRetreat() {
-        // Initially set state to rally to test transition
-        testEnemyUnit.getState().set(testEnemyUnit.rally);
+        // Set dagger unit to the rally state
+        dagger.setState(dagger.rally);
 
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        // Assert that state is currently rally and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
 
         // Testing retreat, so value should be 1
         int retreatIndexInEnum = 1;
         UnitCommand command= UnitCommand.all[retreatIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
     }
 
     @Test
     public void testRetreatToAttack() {
-        // Initially set state to retreat to test transition
-        testEnemyUnit.getState().set(testEnemyUnit.retreat);
+        // Set dagger unit to the retreat state
+        dagger.setState(dagger.retreat);
 
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        // Assert that state is currently retreat and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
         // Testing attack, so value should be 0
         int attackIndexInEnum = 0;
         UnitCommand command= UnitCommand.all[attackIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
     }
 
     /* Attack to shooting and back */
     @Test
     public void testAttackToShooting() {
-        // Initially set state to attack
-        testEnemyUnit.getState().set(testEnemyUnit.attack);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        // Set dagger unit to the attack state
+        dagger.setState(dagger.attack);
 
-        // To be valid, enemy and player units must be on opposing teams
-        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
+        // Assert that state is currently attack and not any other state
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
-        // If player unit is out of range, then enemy unit cannot shoot
-        testPlayerUnit.set(0, 0);
-        boolean isShooting1 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 100, 100, 10);
+        // To be in the shooting state, units must be on opposing teams
+        Assertions.assertNotEquals(dagger.getTeam(), unitOpposingTeam.getTeam());
+
+        // Enemy unit cannot be in shooting range if units on opposing teams are out of range
+        unitOpposingTeam.set(500, 500);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting1 = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertFalse(isShooting1);
 
-        // Player unit is in range, enemy unit should be shooting
-        testPlayerUnit.set(0, 0);
-        boolean isShooting2 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
+        // To be in the shooting state, unitOpposingTeam must be in range of enemy unit's weapon
+        unitOpposingTeam.set(1, 1);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting2 = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertTrue(isShooting2);
     }
 
     @Test
     public void testShootingToAttack() {
-        // To be valid, enemy and player units must be on opposing teams
-        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
+        // To be in the shooting state, units must be on opposing teams
+        Assertions.assertNotEquals(dagger.getTeam(), unitOpposingTeam.getTeam());
 
-        // Player unit is in range, enemy unit should be shooting
-        testPlayerUnit.set(0, 0);
-        boolean isShooting1 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
+        // To be in the shooting state, unitOpposingTeam must be in range of enemy unit's weapon
+        unitOpposingTeam.set(1, 1);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting1 = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertTrue(isShooting1);
 
-        // If player unit is out of range, then enemy unit cannot shoot
-        testPlayerUnit.set(0, 0);
-        boolean isShooting2 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 100, 100, 10);
+        // Enemy unit cannot be in shooting range if units on opposing teams are out of range
+        unitOpposingTeam.set(500, 500);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting2 = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertFalse(isShooting2);
 
-        // Set state to attack
-        testEnemyUnit.getState().set(testEnemyUnit.attack);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        // Set dagger unit to the attack state
+        dagger.setState(dagger.attack);
+
+        // Assert that state is currently attack
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
     }
 
     /* Each state to dead */
     @Test
     public void testAttackToDead() {
-        // Initially set state to attack
-        testEnemyUnit.getState().set(testEnemyUnit.attack);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
+        // Set dagger unit to the attack state
+        dagger.setState(dagger.attack);
 
-        testEnemyUnit.health(50f);
-        Assertions.assertEquals(50f, testEnemyUnit.health());
-        Assertions.assertFalse(testEnemyUnit.isDead());
+        // Assert that state is currently attack and not any other state
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
-        testEnemyUnit.damage(100f);
-        Assertions.assertEquals(-50f, testEnemyUnit.health());
-        Assertions.assertTrue(testEnemyUnit.isDead());
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.isDead());
+
+        // Deal damage to dagger unit so that health falls to 0 or below
+        dagger.damage(150f);
+        Assertions.assertEquals(-20f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
     }
 
     @Test
     public void testRetreatToDead() {
-        // Initially set state to retreat
-        testEnemyUnit.getState().set(testEnemyUnit.retreat);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
+        // Set dagger unit to the retreat state
+        dagger.setState(dagger.retreat);
 
-        testEnemyUnit.health(50f);
-        Assertions.assertEquals(50f, testEnemyUnit.health());
-        Assertions.assertFalse(testEnemyUnit.isDead());
+        // Assert that state is currently retreat and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
-        testEnemyUnit.damage(100f);
-        Assertions.assertEquals(-50f, testEnemyUnit.health());
-        Assertions.assertTrue(testEnemyUnit.isDead());
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.isDead());
+
+        // Deal damage to dagger unit so that health falls to 0 or below
+        dagger.damage(150f);
+        Assertions.assertEquals(-20f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
     }
 
     @Test
     public void testRallyToDead() {
-        // Initially set state to rally
-        testEnemyUnit.getState().set(testEnemyUnit.rally);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        // Set dagger unit to the rally state
+        dagger.setState(dagger.rally);
 
-        testEnemyUnit.health(50f);
-        Assertions.assertEquals(50f, testEnemyUnit.health());
-        Assertions.assertFalse(testEnemyUnit.isDead());
+        // Assert that state is currently rally and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
 
-        testEnemyUnit.damage(100f);
-        Assertions.assertEquals(-50f, testEnemyUnit.health());
-        Assertions.assertTrue(testEnemyUnit.isDead());
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.isDead());
+
+        // Deal damage to dagger unit so that health falls to 0 or below
+        dagger.damage(150f);
+        Assertions.assertEquals(-20f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
     }
 
     @Test
     public void testShootingToDead() {
-        // To be valid, enemy and player units must be on opposing teams
-        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
+        // To be in the shooting state, units must be on opposing teams
+        Assertions.assertNotEquals(dagger.getTeam(), unitOpposingTeam.getTeam());
 
-        // Player unit is in range, enemy unit should be shooting
-        testPlayerUnit.set(0, 0);
-        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
+        // To be in the shooting state, unitOpposingTeam must be in range of enemy unit's weapon
+        unitOpposingTeam.set(1, 1);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertTrue(isShooting);
 
-        testEnemyUnit.health(50f);
-        Assertions.assertEquals(50f, testEnemyUnit.health());
-        Assertions.assertFalse(testEnemyUnit.isDead());
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.isDead());
 
-        testEnemyUnit.damage(100f);
-        Assertions.assertEquals(-50f, testEnemyUnit.health());
-        Assertions.assertTrue(testEnemyUnit.isDead());
+        // Deal damage to dagger unit so that health falls to 0 or below
+        dagger.damage(150f);
+        Assertions.assertEquals(-20f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
     }
 
     /* ========================================================================
@@ -525,89 +578,103 @@ public class EnemyUnitBehaviorTestSuite {
      * =======================================================================*/
     @Test
     public void testAttackToAttack() {
-        // Set the initial state to attack
-        testEnemyUnit.getState().set(testEnemyUnit.getStartState());
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        // Set dagger unit to the attack state
+        dagger.setState(dagger.attack);
+
+        // Assert that state is currently attack and not any other state
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
         // Testing attack, so value should be 0
         int attackIndexInEnum = 0;
         UnitCommand command= UnitCommand.all[attackIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
-        // Check second self-loop in terms to invalidateTarget()
-        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
-        // If player unit is out of range, then enemy unit cannot shoot
-        testPlayerUnit.set(0, 0);
-        boolean isShooting = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 100, 100, 10);
+        // Check second self-loop in terms of invalidateTarget()
+        Assertions.assertNotEquals(dagger.getTeam(), unitOpposingTeam.getTeam());
+
+        // Enemy unit cannot be in shooting range if units on opposing teams are out of range
+        unitOpposingTeam.set(500, 500);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting = !Units.invalidateTarget(unitOpposingTeam, dagger);
         Assertions.assertFalse(isShooting);
     }
 
     @Test
-    public void testShootingToShooting() {
-        // To be valid, enemy and player units must be on opposing teams
-        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
-
-        // Player unit is in range, enemy unit should be shooting
-        testPlayerUnit.set(0, 0);
-        boolean isShooting1 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 0, 0, 10);
-        Assertions.assertTrue(isShooting1);
-
-        // To be valid, enemy and player units must be on opposing teams
-        Assertions.assertNotEquals(this.testEnemyUnit.team, this.testPlayerUnit.team);
-
-        // Player unit is in range, enemy unit should be shooting (enemy unit position slightly changed)
-        testPlayerUnit.set(0, 0);
-        boolean isShooting2 = !Units.invalidateTarget(testPlayerUnit, testEnemyUnit.team, 1, 1, 10);
-        Assertions.assertTrue(isShooting2);
-    }
-
-    @Test
     public void testRetreatToRetreat() {
-        // Set the initial state to retreat
-        testEnemyUnit.getState().set(testEnemyUnit.retreat);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        // Set dagger unit to the retreat state
+        dagger.setState(dagger.retreat);
+
+        // Assert that state is currently retreat and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
 
         // Testing retreat, so value should be 1
         int retreatIndexInEnum = 1;
         UnitCommand command= UnitCommand.all[retreatIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertNotSame(dagger.rally, dagger.getStartState());
     }
 
     @Test
     public void testRallyToRally() {
-        // Set the initial state to rally
-        testEnemyUnit.getState().set(testEnemyUnit.rally);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        // Set dagger unit to the rally state
+        dagger.setState(dagger.rally);
+
+        // Assert that state is currently rally and not any other state
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
 
         // Testing rally, so value should be 2
         int rallyIndexInEnum = 2;
         UnitCommand command= UnitCommand.all[rallyIndexInEnum];
 
         // Test transition via onCommand()
-        testEnemyUnit.onCommand(command);
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.attack));
-        Assertions.assertFalse(testEnemyUnit.getState().is(testEnemyUnit.retreat));
-        Assertions.assertTrue(testEnemyUnit.getState().is(testEnemyUnit.rally));
+        dagger.onCommand(command);
+        Assertions.assertNotSame(dagger.attack, dagger.getStartState());
+        Assertions.assertNotSame(dagger.retreat, dagger.getStartState());
+        Assertions.assertSame(dagger.rally, dagger.getStartState());
+    }
+
+    @Test
+    public void testShootingToShooting() {
+        // To be valid, enemy and player units must be on opposing teams
+        Assertions.assertNotEquals(dagger.getTeam(), unitOpposingTeam.getTeam());
+
+        // To be in the shooting state, unitOpposingTeam must be in range of enemy unit's weapon
+        unitOpposingTeam.set(1, 1);
+
+        // invalidateTarget() determines shooting state
+        boolean isShooting1 = !Units.invalidateTarget(unitOpposingTeam, dagger);
+        Assertions.assertTrue(isShooting1);
+
+        // To be valid, enemy and player units must be on opposing teams
+        Assertions.assertNotEquals(dagger.getTeam(), unitOpposingTeam.getTeam());
+
+        // Enemy unit should still be shooting when unit on opposing team is in range (enemy unit position slightly changed)
+        unitOpposingTeam.set(5, 5);
+        boolean isShooting2 = !Units.invalidateTarget(unitOpposingTeam, dagger);
+        Assertions.assertTrue(isShooting2);
     }
 
 
     /**============================================================================================
      *
+     *      Improving Coverage of Existing Test Suite (Week 5 HW)
+     *
      ============================================================================================*/
+
 }
