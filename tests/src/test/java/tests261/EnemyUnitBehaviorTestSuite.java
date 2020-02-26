@@ -12,10 +12,11 @@ import mindustry.core.FileTree;
 import mindustry.core.GameState;
 import mindustry.core.Logic;
 import mindustry.core.NetServer;
-import mindustry.entities.EntityGroup;
 import mindustry.entities.Units;
+import mindustry.entities.traits.TargetTrait;
 import mindustry.entities.type.BaseUnit;
 import mindustry.entities.type.base.GroundUnit;
+import mindustry.entities.units.StateMachine;
 import mindustry.entities.units.UnitCommand;
 import mindustry.entities.units.UnitState;
 import mindustry.game.Team;
@@ -107,6 +108,10 @@ public class EnemyUnitBehaviorTestSuite {
      * unit is set to
      * */
     static class TestGroundUnit extends GroundUnit {
+        public StateMachine getState() {
+            return state;
+        }
+
         @Override
         public UnitState getStartState() {
             return state.current();
@@ -115,6 +120,7 @@ public class EnemyUnitBehaviorTestSuite {
 
     GroundUnit dagger;              // The dagger unit that will be tested on
     GroundUnit unitOpposingTeam;    // A different unit on opposing teams of the enemy unit
+    TestGroundUnit testDagger;      // The dagger unit of type TestGroundUnit to access new methods for testing
 
     // Redefine the UnitType for the dagger unit to use TestGroundUnit instead of GroundUnit
     @BeforeAll
@@ -140,17 +146,21 @@ public class EnemyUnitBehaviorTestSuite {
     void defineUnits() {
         dagger = (GroundUnit) UnitTypes.dagger.create(Team.derelict) ;
         unitOpposingTeam = (GroundUnit) UnitTypes.titan.create(Team.sharded);
+        testDagger = (TestGroundUnit) UnitTypes.dagger.create(Team.derelict);
 
         // Set initial health
         dagger.health(130f);
         unitOpposingTeam.health(460f);
+        testDagger.health(130f);
 
         // Set initial positions
         dagger.set(0, 0);
         unitOpposingTeam.set(500, 500);
+        testDagger.set(0, 0);
 
         dagger.add();
         unitOpposingTeam.add();
+        testDagger.add();
     }
 
     /**============================================================================================
@@ -677,4 +687,175 @@ public class EnemyUnitBehaviorTestSuite {
      *
      ============================================================================================*/
 
+    /*************************** Improving coverage for HealthTrait ******************************/
+    // damage() method except that health is below 0 and unit is already dead
+    @Test
+    public void testDamageOnDeadUnit() {
+        // Set dagger unit's health below 0, and assert that it is dead
+        dagger.health(-1f);
+        dagger.setDead(true);
+        Assertions.assertEquals(-1f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
+
+        // Damage unit when dead
+        dagger.damage(1f);
+        Assertions.assertEquals(-2f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
+    }
+
+    // kill() method in HealthTrait
+    @Test
+    public void testKillUnit() {
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+
+        // Kill unit and test that health is now -2 (from setting health to -1 and damaging it by 1)
+        dagger.kill();
+        Assertions.assertEquals(-2, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
+    }
+
+    // damaged() method in HealthTrait
+    @Test
+    public void testUnitIsDamaged() {
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.damaged());
+
+        dagger.damage(1f);
+        Assertions.assertTrue(dagger.damaged());
+    }
+
+    // clampHealth() method in HealthTrait
+    @Test
+    public void testClampHealth() {
+        // Set dagger unit's health to 130f, the default
+        dagger.health(130f);
+        Assertions.assertEquals(130f, dagger.health());
+
+        // Set the health of dagger unit over its max health (max health = base health * unit multiplier (which is 1))
+        dagger.health(150f);
+        Assertions.assertEquals(150f, dagger.health());
+
+        // Clamp health so that it doesn't exceed max health
+        dagger.clampHealth();
+        Assertions.assertEquals(130f, dagger.health());
+    }
+
+    // healthf() method in HealthTrait
+    @Test
+    public void testHealthf() {
+        // Set dagger unit's health to 65f, half of the default health of 130f
+        dagger.health(65f);
+        Assertions.assertEquals(65f, dagger.health());
+
+        // max health of dagger unit is 130f, so calling healthf() should return 0.5f from 65 / 130
+        Assertions.assertEquals(0.5f, dagger.healthf());
+    }
+
+    // healBy() method in HealthTrait but without clamping health
+    @Test
+    public void testHealByWithoutClamp() {
+        // Set dagger unit's health to 65f, half of the default health of 130f
+        dagger.health(65f);
+        Assertions.assertEquals(65f, dagger.health());
+
+        // Heal unit by an amount so that clamp() has no effect
+        dagger.healBy(20f);
+        Assertions.assertEquals(85f, dagger.health());
+    }
+
+    // healBy() method in HealthTrait but with clamping health
+    @Test
+    public void testHealByWithClamp() {
+        // Set dagger unit's health to 65f, half of the default health of 130f
+        dagger.health(65f);
+        Assertions.assertEquals(65f, dagger.health());
+
+        // Heal unit by an amount so that clamp() has an effect
+        dagger.healBy(100f);
+        Assertions.assertEquals(130f, dagger.health());
+    }
+
+    // heal() method when unit is alive
+    @Test
+    public void testHealWhenUnitIsAlive() {
+        // Set dagger unit's health to 65f, half of the default health of 130f
+        dagger.health(65f);
+        Assertions.assertEquals(65f, dagger.health());
+
+        // Assert that unit is alive
+        Assertions.assertFalse(dagger.isDead());
+
+        // Heal unit and assert that it is at max health and is alive
+        dagger.heal();
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.isDead());
+    }
+
+    // heal() method when unit is dead
+    @Test
+    public void testHealWhenUnitIsDead() {
+        // Set dagger unit's health below 0, and assert that it is dead
+        dagger.health(-1f);
+        dagger.setDead(true);
+        Assertions.assertEquals(-1f, dagger.health());
+        Assertions.assertTrue(dagger.isDead());
+
+        // Heal dagger unit and assert that health changed and unit is now alive
+        dagger.heal();
+        Assertions.assertEquals(130f, dagger.health());
+        Assertions.assertFalse(dagger.isDead());
+    }
+
+    /******************* Improving coverage for Enemy Unit State Behavior ************************/
+    @Test
+    public void testStateMachineIs() {
+        // Test when state is equal
+        testDagger.setState(testDagger.rally);
+        Assertions.assertTrue(testDagger.getState().is(testDagger.rally));
+
+        // Test when state is not equal
+        testDagger.setState(testDagger.retreat);
+        Assertions.assertFalse(testDagger.getState().is(testDagger.rally));
+    }
+
+    @Test
+    public void testStateMachineUpdate() {
+        // update will successfully call for each GroundUnit if a state exists
+        // Assert that the testDagger unit's state exists
+        Assertions.assertNotNull(testDagger.getState());
+
+        // Call update, which will only display successfully coverage if state is not null
+        testDagger.getState().update();
+
+        Assertions.assertNotNull(testDagger.getState());
+    }
+
+    @Test
+    public void testGetUnitType() {
+        // Retrieve the type for dagger unit and assert that the name really returns what it was initialized as
+        UnitType type = dagger.getType();
+        Assertions.assertEquals("dagger2", type.name);
+    }
+
+    @Test
+    public void testIsValidForInvalidateMethod() {
+        // If we create a unit with health and add it, isValid should return true
+        GroundUnit addedDaggerUnit = (GroundUnit) UnitTypes.dagger.create(Team.derelict);
+        addedDaggerUnit.set(0, 0);
+        addedDaggerUnit.health(130f);
+        addedDaggerUnit.add();
+
+        Assertions.assertTrue(addedDaggerUnit.isValid());
+
+        // If we create a unit with health without adding it, isValid should return false
+        GroundUnit unAddedDaggerUnit = (GroundUnit) UnitTypes.dagger.create(Team.derelict);
+        addedDaggerUnit.set(0, 0);
+        addedDaggerUnit.health(130f);
+
+        Assertions.assertFalse(unAddedDaggerUnit.isValid());
+    }
 }
