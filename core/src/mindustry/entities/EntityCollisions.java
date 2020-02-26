@@ -156,6 +156,56 @@ public class EntityCollisions{
         }
     }
 
+    public boolean collideTest(float x1, float y1, float w1, float h1, float vx1, float vy1,
+                            float x2, float y2, float w2, float h2, float vx2, float vy2, Vec2 out){
+        float px = vx1, py = vy1;
+
+        vx1 -= vx2;
+        vy1 -= vy2;
+
+        float xInvEntry, yInvEntry;
+        float xInvExit, yInvExit;
+
+        if(vx1 > 0.0f){
+            xInvEntry = x2 - (x1 + w1);
+            xInvExit = (x2 + w2) - x1;
+        }else{
+            xInvEntry = (x2 + w2) - x1;
+            xInvExit = x2 - (x1 + w1);
+        }
+
+        if(vy1 > 0.0f){
+            yInvEntry = y2 - (y1 + h1);
+            yInvExit = (y2 + h2) - y1;
+        }else{
+            yInvEntry = (y2 + h2) - y1;
+            yInvExit = y2 - (y1 + h1);
+        }
+
+        float xEntry, yEntry;
+        float xExit, yExit;
+
+        xEntry = xInvEntry / vx1;
+        xExit = xInvExit / vx1;
+
+        yEntry = yInvEntry / vy1;
+        yExit = yInvExit / vy1;
+
+        float entryTime = Math.max(xEntry, yEntry);
+        float exitTime = Math.min(xExit, yExit);
+
+        if(entryTime > exitTime || xExit < 0.0f || yExit < 0.0f || xEntry > 1.0f || yEntry > 1.0f){
+            return false;
+        }else{
+            float dx = x1 + w1 / 2f + px * entryTime;
+            float dy = y1 + h1 / 2f + py * entryTime;
+
+            out.set(dx, dy);
+
+            return true;
+        }
+    }
+
     private boolean collide(float x1, float y1, float w1, float h1, float vx1, float vy1,
                             float x2, float y2, float w2, float h2, float vx2, float vy2, Vec2 out){
         float px = vx1, py = vy1;
