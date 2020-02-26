@@ -13,7 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 
-public class EnemyUnitBehaviorFSMTests {
+public class EnemyUnitBehaviorFSMTests
+{
     private TestGroundUnit testEnemyUnit;
     private TestGroundUnit testPlayerUnit;
 
