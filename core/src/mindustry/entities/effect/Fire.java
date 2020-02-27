@@ -34,6 +34,10 @@ public class Fire extends TimedEntity implements SaveTrait, SyncTrait{
     public Fire(){
     }
 
+    public static IntMap<Fire> getIntMapFireTest() {
+        return map;
+    }
+
     @Remote
     public static void onRemoveFire(int fid){
         fireGroup.removeByID(fid);
