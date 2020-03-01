@@ -1,7 +1,6 @@
 package tests261;
 
 import arc.ApplicationCore;
-import arc.audio.Music;
 import arc.backend.headless.HeadlessApplication;
 import arc.math.geom.Rect;
 import arc.math.geom.Vec2;
@@ -19,7 +18,6 @@ import mindustry.entities.EntityCollisions;
 import mindustry.entities.type.base.GroundUnit;
 import mindustry.entities.units.StateMachine;
 import mindustry.entities.units.UnitState;
-import mindustry.game.MusicControl;
 import mindustry.game.Team;
 import mindustry.maps.Map;
 import mindustry.net.Net;

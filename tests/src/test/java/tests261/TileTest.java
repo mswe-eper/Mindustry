@@ -1,10 +1,11 @@
-package mindustry.world;
+package tests261;
 
 import mindustry.Vars;
 import mindustry.core.World;
 import mindustry.entities.effect.Fire;
 import mindustry.entities.type.TimedEntity;
 import mindustry.net.Net;
+import mindustry.world.Tile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
