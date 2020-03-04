@@ -27,6 +27,7 @@ public class ZoneTests{
         state.set(State.menu);
     }
 
+
     @TestFactory
     DynamicTest[] testZoneValidity(){
         Array<DynamicTest> out = new Array<>();
